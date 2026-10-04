@@ -1,22 +1,18 @@
-# Hannah's English Coach
+# Hannah's English Coach – Version 2
 
-Persönliche Lernplattform für Hannah, Klasse 6.
+Adaptive English learning platform for Hannah, Grade 6, starting with Unit 5 “Let’s go shopping”.
 
-## Enthalten
-- persönliches Dashboard
-- Unit 5 „Let's go shopping“
-- Vokabeltraining mit lokalem Lernstand
-- Grammatiktraining: Present Progressive, some/any, much/many/a lot of, a few/a little/a couple of
-- Reading
-- Writing Coach
-- Mini-Probeklassenarbeit
-- PWA-Dateien für spätere Nutzung auf iPhone/iPad
+## Learning features
+- spaced repetition for vocabulary
+- adaptive error repetition
+- competency tracking for G22–G26
+- daily 10-minute challenge
+- vocabulary, grammar, reading
+- browser text-to-speech listening
+- optional browser speech recognition for speaking
+- writing criteria feedback
+- multi-part mock class test
+- error analysis and learning history
+- local progress storage
 
-## Erweiterbarkeit
-Die Plattform ist als wachsende Lernplattform gedacht. Neue Units können später als weitere Inhaltsmodule ergänzt werden. Der Lernstand wird lokal über stabile Inhaltsbereiche gespeichert.
-
-## iPhone
-Für die PWA-Installation muss die Plattform über HTTPS gehostet werden, z. B. GitHub Pages oder einen vergleichbaren Webhost. Eine lokale HTML-Datei in „Dateien“ ist nicht dasselbe wie eine installierbare PWA.
-
-## Hinweis zur Bewertung
-Automatische Bewertungen sind Lernfeedback und keine offizielle Schulnote.
+The platform is a learning aid, not an official school grading system.
