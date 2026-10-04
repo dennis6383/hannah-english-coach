@@ -1,0 +1,9 @@
+{
+  "name": "Hannah's English Coach",
+  "short_name": "Hannah English",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#5b5bd6",
+  "lang": "de"
+}
