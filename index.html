@@ -121,7 +121,29 @@ function answerR(i,enc){let v=decodeURIComponent(enc),ok=v===R[i].a;state.readin
 function checkWriting(){let t=writingText.value.trim(),hits=["Can I help you","I'm looking for","How much","expensive","cheaper","I'll take it","Here you are"].filter(x=>t.toLowerCase().includes(x.toLowerCase())).length;let words=t.split(/\s+/).filter(Boolean).length;writingFeedback.innerHTML=`<div class="feedback ${hits>=5&&words>=35?"ok":"no"}"><b>Schreibcheck:</b> ${hits}/7 wichtige Wendungen gefunden, ${words} Wörter. Ziel: mindestens 5 Wendungen und ca. 35–60 Wörter. Achte außerdem auf Großschreibung, Satzzeichen und passende Antworten.</div>`}
 function clearWriting(){writingText.value="";writingFeedback.innerHTML=""}
 function renderTest(){testArea.innerHTML=`<p><b>Teil A – Grammar & Vocabulary</b></p><div id="tq"></div><button class="btn primary" onclick="finishTest()">Auswertung</button><div id="tres"></div>`;tq.innerHTML=G.slice(0,6).map((x,i)=>`<div class="card"><b>${i+1}. ${x.q}</b><select id="ta${i}"><option value="">Bitte wählen</option>${x.o.map(o=>`<option>${o}</option>`).join("")}</select></div>`).join("")}
-function finishTest(){let score=0;G.slice(0,6).forEach((x,i)=>{if(document.querySelector("#ta"+i).value===x.a)score++});tres.innerHTML=`<div class="feedback ${score>=5?"ok":"no"}"><b>${score}/6 Punkten</b><br>${score>=5?"Sehr gut, Hannah!":"Das ist eine gute Übung – die Fehler zeigen dir genau, was du wiederholen solltest."}</div>`}
+function finishTest(){
+let score=0, wrong=[];
+G.slice(0,6).forEach((x,i)=>{
+  const chosen=document.querySelector("#ta"+i).value;
+  if(chosen===x.a) score++;
+  else wrong.push({i:i+1,q:x.q,chosen:chosen||"Keine Antwort",correct:x.a});
+});
+let html=`<div class="feedback ${score>=5?"ok":"no"}"><b>${score}/6 Punkten</b><br>${score>=5?"Sehr gut, Hannah!":"Schau dir deine Fehler unten an und übe genau diese Themen noch einmal."}</div>`;
+if(wrong.length){
+  html+=`<div class="card" style="margin-top:12px"><h3>🔎 Deine Fehler</h3>`;
+  wrong.forEach(w=>{
+    html+=`<div style="padding:12px 0;border-bottom:1px solid var(--line)">
+      <b>${w.i}. ${w.q}</b>
+      <div class="feedback no" style="margin-top:8px">Deine Antwort: <b>${w.chosen}</b></div>
+      <div class="feedback ok" style="margin-top:8px">Richtige Antwort: <b>${w.correct}</b></div>
+    </div>`;
+  });
+  html+=`</div>`;
+} else {
+  html+=`<div class="feedback ok" style="margin-top:12px">🎉 Hannah, alles richtig! Keine Fehler zum Nacharbeiten.</div>`;
+}
+tres.innerHTML=html;
+}
 initVocab();updateHome();
 </script>
 </main>
