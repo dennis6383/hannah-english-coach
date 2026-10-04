@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#5b5bd6">
+<link rel="manifest" href="manifest.json">
+<title>Hannah's English Coach</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#667085;--primary:#5b5bd6;--primary2:#7c5cff;--good:#14804a;--bad:#b42318;--line:#e4e7ec}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+header{background:linear-gradient(135deg,#5148d8,#8a5cf6);color:#fff;padding:28px 18px 24px;border-radius:0 0 26px 26px}
+header .wrap,main{max-width:980px;margin:auto}h1{margin:0;font-size:30px}header p{margin:6px 0 0;opacity:.9}
+main{padding:14px 14px 40px}.nav{display:flex;gap:8px;overflow:auto;padding:10px 0;position:sticky;top:0;background:var(--bg);z-index:5}
+.nav button,.btn{border:0;border-radius:13px;padding:11px 14px;font-weight:750;cursor:pointer;font-size:15px}.nav button{background:#fff;color:var(--text);white-space:nowrap}.nav .active,.primary{background:var(--primary);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 5px 20px #1018280a}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{text-align:center;border:1px solid var(--line);border-radius:15px;padding:13px}.stat b{display:block;font-size:25px}.muted{color:var(--muted);font-size:13px}
+.progress{height:9px;background:#e9ecf3;border-radius:10px;overflow:hidden}.progress>div{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary2))}
+.task{font-size:20px;line-height:1.4}.options button{display:block;width:100%;text-align:left;margin:8px 0;padding:13px;border:1px solid var(--line);background:#fafbfc;border-radius:13px;font-size:16px;cursor:pointer}.options button:hover{border-color:var(--primary)}
+.feedback{padding:12px;border-radius:12px;margin-top:10px}.ok{background:#ecfdf3;color:var(--good)}.no{background:#fef3f2;color:var(--bad)}
+textarea,input,select{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:12px;font-size:16px;background:#fff}textarea{min-height:160px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef0ff;color:#4038a8;font-size:12px;font-weight:700;margin:3px}
+.wordcard{min-height:220px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer}.word{font-size:32px;font-weight:800}.answer{font-size:26px;color:var(--primary);margin-top:15px}
+.hidden{display:none!important}.lesson h3{margin-bottom:6px}.lesson ul{line-height:1.65}.smallbtn{padding:8px 10px;font-size:13px}
+table{width:100%;border-collapse:collapse}td,th{padding:9px;border-bottom:1px solid var(--line);text-align:left}
+@media(max-width:650px){.grid{grid-template-columns:1fr 1fr}h1{font-size:27px}.word{font-size:28px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>🌟 Hannah's English Coach</h1><p>Klasse 6 · Englisch · persönlich aufgebaut für Hannah</p></div></header>
+<main>
+<nav class="nav">
+<button class="active" data-tab="home">🏠 Start</button>
+<button data-tab="vocab">📚 Vokabeln</button>
+<button data-tab="grammar">✏️ Grammatik</button>
+<button data-tab="reading">📖 Lesen</button>
+<button data-tab="writing">📝 Schreiben</button>
+<button data-tab="test">🎯 Probe</button>
+</nav>
+
+<section id="home">
+<div class="card"><h2>Hallo Hannah! 👋</h2><p>Dein Lerncoach passt die Übungen an deinen bisherigen Lernstand an. Heute kannst du gezielt das üben, was noch nicht sicher sitzt.</p>
+<div class="grid"><div class="stat"><b id="mastery">0%</b><span class="muted">Unit-5-Lernstand</span></div><div class="stat"><b id="answered">0</b><span class="muted">beantwortet</span></div><div class="stat"><b id="streak">0</b><span class="muted">richtige Serie</span></div></div></div>
+<div class="card"><h3>🎯 Dein nächster sinnvoller Schritt</h3><p id="recommendation">Starte mit einer kurzen Grammatikrunde. Danach bekommst du automatisch eine passende Übung.</p><button class="btn primary" onclick="go('grammar')">Jetzt üben</button></div>
+<div class="card"><h3>📘 Aktuelle Unit</h3><span class="pill">Unit 5 · Let's go shopping</span><span class="pill">G22–G26</span><span class="pill">Reading</span><span class="pill">Writing</span><p class="muted">Die Plattform ist so aufgebaut, dass weitere Units später ergänzt werden können.</p></div>
+</section>
+
+<section id="vocab" class="hidden">
+<div class="card"><h2>📚 Vokabeltraining</h2><p class="muted">Tippe auf die Karte zum Umdrehen. Danach selbst einschätzen: ✓ gewusst oder ✗ noch üben.</p>
+<select id="vcat"></select></div>
+<div class="card wordcard" onclick="flipCard()"><div><div class="muted" id="vnum"></div><div class="word" id="vfront"></div><div id="vback" class="answer hidden"></div><div class="muted" id="vhint">Tippen zum Umdrehen</div></div></div>
+<div class="row"><button class="btn" onclick="prevV()">← Zurück</button><button class="btn primary" onclick="nextV()">Nächste →</button><button class="btn" onclick="rateV(false)">✗ Noch üben</button><button class="btn" onclick="rateV(true)">✓ Gewusst</button></div>
+</section>
+
+<section id="grammar" class="hidden">
+<div class="card"><h2>✏️ Grammatik-Coach</h2><p class="muted">Unit 5: Present Progressive, some/any, much/many/a lot of, a few/a little/a couple of.</p>
+<div id="gq"></div></div>
+</section>
+
+<section id="reading" class="hidden">
+<div class="card lesson"><h2>📖 Reading</h2><p><b>Saturday at the flea market</b></p>
+<p>On Saturday morning, Holly and her mum go to a flea market. They like finding cheap things. Holly sees a blue jacket for £8, but she hasn't got enough money. Then she finds a green jacket for £5. She buys the green jacket. Later, she finds a few old books and a new pair of trainers.</p>
+<h3>Fragen</h3><div id="rq"></div></div>
+</section>
+
+<section id="writing" class="hidden">
+<div class="card"><h2>📝 Writing Coach</h2><p>Schreibe einen kurzen Dialog zwischen einer Kundin und einer Verkäuferin. Nutze mindestens <b>5</b> dieser Wendungen:</p>
+<div><span class="pill">Can I help you?</span><span class="pill">I'm looking for …</span><span class="pill">How much is …?</span><span class="pill">That's expensive.</span><span class="pill">Have you got a cheaper one?</span><span class="pill">I'll take it.</span><span class="pill">Here you are.</span></div>
+<textarea id="writingText" placeholder="Shop assistant: Hello! Can I help you?&#10;Customer: ..."></textarea>
+<div class="row"><button class="btn primary" onclick="checkWriting()">Schreibcheck</button><button class="btn" onclick="clearWriting()">Leeren</button></div>
+<div id="writingFeedback"></div></div>
+</section>
+
+<section id="test" class="hidden">
+<div class="card"><h2>🎯 Mini-Probeklassenarbeit</h2><p class="muted">Automatisch bewertbare Aufgaben. Offene Texte werden zusätzlich nach Kriterien geprüft.</p><div id="testArea"></div></div>
+</section>
+
+<script>
+const VOCABS=[["einkaufen gehen", "to go shopping", "Shopping"],["Geschenk", "present", "Shopping"],["Sonderangebot", "special offer", "Shopping"],["Schnäppchen", "bargain", "Shopping"],["teuer", "expensive", "Shopping"],["billig / preiswert", "cheap", "Shopping"],["Preis", "price", "Shopping"],["Pfund", "pound", "Shopping"],["Euro", "euro", "Shopping"],["Cent", "cent", "Shopping"],["Prozent", "per cent", "Shopping"],["Geld ausgeben", "to spend money", "Shopping"],["Geld sparen", "to save money", "Shopping"],["kaufen", "to buy", "Shopping"],["verkaufen", "to sell", "Shopping"],["bezahlen", "to pay", "Shopping"],["kosten", "to cost", "Shopping"],["suchen", "to look for", "Shopping"],["brauchen", "to need", "Shopping"],["helfen", "to help", "Shopping"],["bekommen", "to get", "Shopping"],["finden", "to find", "Shopping"],["wählen", "to choose", "Shopping"],["prüfen", "to check", "Shopping"],["im Angebot sein", "to be on sale", "Shopping"],["anrufen", "to call / to phone", "Shopping"],["Nachricht", "message", "Shopping"],["morgen", "tomorrow", "Shopping"],["heute", "today", "Shopping"],["Samstag", "Saturday", "Shopping"],["Freitag", "Friday", "Shopping"],["nächste / als Nächstes", "next", "Shopping"],["Flohmarkt", "flea market", "Shopping"],["Supermarkt", "supermarket", "Places"],["Buchhandlung", "book shop", "Places"],["Wohltätigkeitsladen", "charity shop", "Places"],["Sportgeschäft", "sports shop", "Places"],["Schuhgeschäft", "shoe shop", "Places"],["Juweliergeschäft", "jewellery shop", "Places"],["Modegeschäft", "fashion shop", "Places"],["Café / Imbissstube", "café / snack bar", "Places"],["Markt", "market", "Places"],["Gemeindezentrum", "community centre", "Places"],["Schreibwaren", "stationery", "Shopping"],["Schmuck", "jewellery", "Shopping"],["Armband", "bracelet", "Shopping"],["Paar", "pair", "Shopping"],["Rollschuhe", "roller skates", "Shopping"],["ein Paar Rollschuhe", "a pair of skates", "Shopping"],["Kleidung", "clothes", "Shopping"],["T-Shirt", "T-shirt", "Clothes"],["Jeans", "jeans", "Clothes"],["Kleid", "dress", "Clothes"],["Schuhe", "shoes", "Clothes"],["Turnschuhe", "trainers", "Clothes"],["Tasche", "bag", "Clothes"],["Jacke", "jacket", "Clothes"],["Wasserflasche", "water bottle", "Food & Quantities"],["Flasche", "bottle", "Quantities"],["Dose", "can", "Quantities"],["Packung", "packet", "Quantities"],["Tüte", "bag", "Quantities"],["Stück", "piece", "Quantities"],["Glas", "glass", "Quantities"],["Tasse", "cup", "Quantities"],["Schachtel / Kiste", "box", "Quantities"],["eine Flasche Wasser", "a bottle of water", "Quantities"],["eine Dose Cola", "a can of Coke", "Quantities"],["eine Tasse Tee", "a cup of tea", "Quantities"],["ein Glas Orangensaft", "a glass of orange juice", "Quantities"],["eine Schachtel mit alten Sachen", "a box of old things", "Quantities"],["eine Packung Kekse", "a packet of biscuits", "Quantities"],["eine Tüte Chips", "a bag of crisps", "Quantities"],["ein Stück Kuchen", "a piece of cake", "Quantities"],["some", "einige / etwas", "Grammar"],["any", "irgendwelche / irgendein", "Grammar"],["much", "viel – nicht zählbar", "Grammar"],["many", "viele – zählbar", "Grammar"],["a lot of", "viel / viele", "Grammar"],["a few", "ein paar – zählbar", "Grammar"],["a little", "ein wenig – nicht zählbar", "Grammar"],["a couple of", "ein Paar / zwei", "Grammar"],["im Moment", "at the moment", "Grammar"],["normalerweise", "usually", "Grammar"],["oft", "often", "Grammar"],["manchmal", "sometimes", "Grammar"],["nie", "never", "Grammar"],["jeden Samstag", "every Saturday", "Grammar"],["gerade", "at the moment", "Grammar"],["jetzt", "now", "Grammar"],["immer", "always", "Grammar"],["zu viel", "too much", "Grammar"],["nicht viele", "not many", "Grammar"],["nicht viel", "not much", "Grammar"],["ausräumen / entrümpeln", "to clear out", "Garage & Charity"],["Garage", "garage", "Garage & Charity"],["sich fühlen", "to feel", "Garage & Charity"],["hoffnungsvoll", "hopeful", "Garage & Charity"],["müssen", "must", "Garage & Charity"],["wert sein", "to be worth", "Garage & Charity"],["klingeln", "to ring", "Garage & Charity"],["Rat", "advice", "Garage & Charity"],["sollte", "should", "Garage & Charity"],["ungefähr", "about", "Garage & Charity"],["Zeug / Sachen", "stuff", "Garage & Charity"],["wegwerfen", "to throw away", "Garage & Charity"],["Kaffee", "coffee", "Garage & Charity"],["wohltätiger Zweck / Wohltätigkeitsverein", "charity", "Garage & Charity"],["sparen", "to save", "Garage & Charity"],["alte Sachen", "old things", "Garage & Charity"],["Spielzeug", "toys", "Garage & Charity"],["Poster", "posters", "Garage & Charity"],["Karten", "cards", "Garage & Charity"],["DVD", "DVD", "Garage & Charity"],["Computerspiele", "computer games", "Garage & Charity"],["Kaputtes / kaputt", "broken", "Garage & Charity"],["Glück haben / glücklich", "lucky", "Garage & Charity"],["verlieren", "to lose", "Garage & Charity"],["arbeiten", "to work", "Garage & Charity"],["Käufer", "buyer", "Garage & Charity"],["Verkäufer", "seller", "Garage & Charity"],["nichts", "nothing", "Garage & Charity"],["mehr als", "more than", "Garage & Charity"],["halb", "half", "Garage & Charity"],["Nachricht ausrichten / entgegennehmen", "take a message", "Garage & Charity"],["Orange", "orange", "Food"],["Tee", "tea", "Food"],["Cola", "Coke", "Food"],["Kekse", "biscuits", "Food"],["Chips", "crisps", "Food"],["Kuchen", "cake", "Food"],["Wasser", "water", "Food"],["Karotte", "carrot", "Food"],["Apfel", "apple", "Food"],["Käse", "cheese", "Food"],["Milch", "milk", "Food"],["Zucker", "sugar", "Food"],["Sandwich", "sandwich", "Food"],["Orangensaft", "orange juice", "Food"],["Burger", "burger", "Food"],["Pommes", "chips", "Food"],["Mango", "mango", "Food"],["Joghurt", "yoghurt", "Food"],["Obstsalat", "fruit salad", "Food"],["Erdbeere", "strawberry", "Food"],["Melone", "melon", "Food"],["Kirsche", "cherry", "Food"],["Brombeere", "blackberry", "Food"],["Traube", "grape", "Food"],["Banane", "banana", "Food"],["Pflaume", "plum", "Food"],["Johannisbeere", "blackcurrant", "Food"],["Himbeere", "raspberry", "Food"],["Kiwi", "kiwi", "Food"],["Schokolade", "chocolate", "Food"],["Nuss", "nut", "Food"],["Müsli / Frühstückszerealie", "cereal", "Food"],["gesund", "healthy", "Food"],["seltsam / merkwürdig", "strange", "Food"],["zusammenpassen", "to go together", "Food"],["Baked Beans", "baked beans", "Food"],["Bohnen auf Toast", "beans on toast", "Food"],["Käse auf Toast", "cheese on toast", "Food"],["Fisch und Chips", "fish and chips", "Food"],["Curry", "curry", "Food"],["Steak Pie", "steak pie", "Food"],["Trifle", "trifle", "Food"],["Apfelkuchen", "apple pie", "Food"],["Schulferien", "school holidays", "Holidays"],["sich entspannen", "to relax", "Holidays"],["Zeltlager / Camp", "camp", "Holidays"],["Sommer", "summer", "Holidays"],["teilnehmen an", "to take part in", "Holidays"],["verpassen", "to miss", "Holidays"],["immer noch", "still", "Holidays"],["Berufserfahrung", "work experience", "Holidays"],["Wochenende", "weekend", "Holidays"],["unterrichten", "to teach", "Holidays"],["Wakeboarding", "wakeboarding", "Holidays"],["Paddleboarding / Stehpaddeln", "paddle boarding", "Holidays"],["Zukunft", "future", "Holidays"],["Januar", "January", "Holidays"],["Februar", "February", "Holidays"],["März", "March", "Holidays"],["April", "April", "Holidays"],["Mai", "May", "Holidays"],["Juni", "June", "Holidays"],["Juli", "July", "Holidays"],["August", "August", "Holidays"],["September", "September", "Holidays"],["Oktober", "October", "Holidays"],["November", "November", "Holidays"],["Dezember", "December", "Holidays"],["Kann ich Ihnen helfen?", "Can I help you?", "Useful phrases"],["Ich suche …", "I'm looking for …", "Useful phrases"],["Wie viel kostet …?", "How much is …?", "Useful phrases"],["Was kostet …?", "What does it cost?", "Useful phrases"],["Kann ich bitte … haben?", "Can I have …, please?", "Useful phrases"],["Bitte schön.", "Here you are.", "Useful phrases"],["Sonst noch etwas?", "Anything else?", "Useful phrases"],["Das macht …", "That's …", "Useful phrases"],["Es kostet …", "It costs …", "Useful phrases"],["Sie kosten …", "They're …", "Useful phrases"],["Das ist teuer.", "That's expensive.", "Useful phrases"],["Das ist billig.", "That's cheap.", "Useful phrases"],["Spitzenqualität", "top quality", "Useful phrases"],["gute Qualität", "good quality", "Useful phrases"],["Ich habe nur …", "I've only got …", "Useful phrases"],["Ich nehme es.", "I'll take it.", "Useful phrases"],["Danke.", "Thank you.", "Useful phrases"],["Entschuldigung.", "Excuse me.", "Useful phrases"],["Es tut mir leid.", "I'm sorry.", "Useful phrases"]];
+
+const G=[
+{q:"Look! Holly ___ (run) to the shop.",a:"is running",o:["runs","is running","run"]},
+{q:"Holly usually ___ (go) shopping on Saturdays.",a:"goes",o:["is going","goes","go"]},
+{q:"I haven't got ___ old books.",a:"any",o:["some","any","a lot"]},
+{q:"Can I have ___ biscuits, please?",a:"some",o:["some","any","much"]},
+{q:"How ___ money have you got?",a:"much",o:["many","much","a few"]},
+{q:"How ___ books have you got?",a:"many",o:["much","many","a little"]},
+{q:"There are ___ people at the market.",a:"a lot of",o:["much","a lot of","a little"]},
+{q:"I've got ___ books, but not many.",a:"a few",o:["a little","a few","much"]},
+{q:"There is ___ milk in the fridge.",a:"a little",o:["a few","a little","many"]},
+{q:"They are ___ (look) for a present at the moment.",a:"looking",o:["look","looking","looks"]}
+];
+const R=[
+{q:"When do Holly and her mum go to the flea market?",a:"On Saturday morning."},
+{q:"Why do they like flea markets?",a:"Because they like finding cheap things."},
+{q:"How much is the blue jacket?",a:"£8."},
+{q:"Which jacket does Holly buy?",a:"The green jacket."},
+{q:"What does Holly find later?",a:"Old books and a new pair of trainers."}
+];
+
+let state=JSON.parse(localStorage.getItem("hannahCoach")||'{"vocab":{},"grammar":{},"reading":{},"stats":{"answered":0,"correct":0,"streak":0}}');
+function save(){localStorage.setItem("hannahCoach",JSON.stringify(state));updateHome()}
+function go(tab){document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));document.querySelector("#"+tab).classList.remove("hidden");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab)); if(tab==="grammar")renderGrammar();if(tab==="reading")renderReading();if(tab==="test")renderTest();}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function updateHome(){let total=VOCABS.length+G.length+R.length;let got=Object.values(state.vocab).filter(x=>x===true).length+Object.values(state.grammar).filter(x=>x===true).length+Object.values(state.reading).filter(x=>x===true).length;document.querySelector("#mastery").textContent=Math.round(got/total*100)+"%";document.querySelector("#answered").textContent=state.stats.answered;document.querySelector("#streak").textContent=state.stats.streak;document.querySelector("#recommendation").textContent=state.stats.answered<5?"Starte mit 5 kurzen Grammatikfragen.":state.stats.streak<3?"Wiederhole jetzt deine Fehler – drei richtige Antworten am Stück sind dein nächstes Ziel.":"Sehr gut! Als Nächstes passt eine Reading- oder Writing-Aufgabe."}
+let deck=[],vi=0,vflip=false;
+function initVocab(){const cats=[...new Set(VOCABS.map(x=>x[2]))];vcat.innerHTML='<option value="ALL">Alle Bereiche</option>'+cats.map(c=>`<option>${c}</option>`).join("");vcat.onchange=resetV;resetV()}
+function resetV(){deck=VOCABS.filter(x=>vcat.value==="ALL"||x[2]===vcat.value);vi=0;vflip=false;renderV()}
+function renderV(){let x=deck[vi];vfront.textContent=x[0];vback.textContent=x[1];vback.classList.toggle("hidden",!vflip);vhint.textContent=vflip?"Tippen für nächste Karte":"Tippen zum Umdrehen";vnum.textContent=`Karte ${vi+1} von ${deck.length}`}
+function flipCard(){if(vflip)nextV();else{vflip=true;renderV()}}
+function nextV(){vi=(vi+1)%deck.length;vflip=false;renderV()} function prevV(){vi=(vi-1+deck.length)%deck.length;vflip=false;renderV()}
+function rateV(ok){state.vocab[deck[vi][0]]=ok;state.stats.answered++;if(ok)state.stats.streak++;else state.stats.streak=0;save();nextV()}
+let gi=0;
+function renderGrammar(){gq.innerHTML=`<div class="muted">Frage ${gi+1} von ${G.length}</div><div class="progress"><div style="width:${(gi/G.length)*100}%"></div></div><p class="task">${G[gi].q}</p><div class="options">${G[gi].o.map(o=>`<button onclick="answerG('${encodeURIComponent(o)}')">${o}</button>`).join("")}</div>`}
+function answerG(enc){let o=decodeURIComponent(enc),x=G[gi],ok=o===x.a;state.grammar[gi]=ok;state.stats.answered++;if(ok)state.stats.streak++;else state.stats.streak=0;save();gq.innerHTML+=`<div class="feedback ${ok?"ok":"no"}">${ok?"✓ Richtig!":"✗ Noch nicht. Richtige Antwort: <b>"+x.a+"</b>"}</div><button class="btn primary" onclick="gi=(gi+1)%G.length;renderGrammar()">Nächste Frage →</button>`}
+let ri=0;
+function renderReading(){rq.innerHTML=R.map((x,i)=>`<div class="card"><b>${i+1}. ${x.q}</b><div class="options">${[x.a,"£8.","On Sunday afternoon.","The blue jacket."].filter((v,j,a)=>a.indexOf(v)===j).slice(0,4).map(v=>`<button onclick="answerR(${i},'${encodeURIComponent(v)}')">${v}</button>`).join("")}</div><div id="rf${i}"></div></div>`).join("")}
+function answerR(i,enc){let v=decodeURIComponent(enc),ok=v===R[i].a;state.reading[i]=ok;state.stats.answered++;if(ok)state.stats.streak++;else state.stats.streak=0;save();document.querySelector("#rf"+i).innerHTML=`<div class="feedback ${ok?"ok":"no"}">${ok?"✓ Richtig!":"✗ Richtige Antwort: "+R[i].a}</div>`}
+function checkWriting(){let t=writingText.value.trim(),hits=["Can I help you","I'm looking for","How much","expensive","cheaper","I'll take it","Here you are"].filter(x=>t.toLowerCase().includes(x.toLowerCase())).length;let words=t.split(/\s+/).filter(Boolean).length;writingFeedback.innerHTML=`<div class="feedback ${hits>=5&&words>=35?"ok":"no"}"><b>Schreibcheck:</b> ${hits}/7 wichtige Wendungen gefunden, ${words} Wörter. Ziel: mindestens 5 Wendungen und ca. 35–60 Wörter. Achte außerdem auf Großschreibung, Satzzeichen und passende Antworten.</div>`}
+function clearWriting(){writingText.value="";writingFeedback.innerHTML=""}
+function renderTest(){testArea.innerHTML=`<p><b>Teil A – Grammar & Vocabulary</b></p><div id="tq"></div><button class="btn primary" onclick="finishTest()">Auswertung</button><div id="tres"></div>`;tq.innerHTML=G.slice(0,6).map((x,i)=>`<div class="card"><b>${i+1}. ${x.q}</b><select id="ta${i}"><option value="">Bitte wählen</option>${x.o.map(o=>`<option>${o}</option>`).join("")}</select></div>`).join("")}
+function finishTest(){
+let score=0, wrong=[];
+G.slice(0,6).forEach((x,i)=>{
+  const chosen=document.querySelector("#ta"+i).value;
+  if(chosen===x.a) score++;
+  else wrong.push({i:i+1,q:x.q,chosen:chosen||"Keine Antwort",correct:x.a});
+});
+let html=`<div class="feedback ${score>=5?"ok":"no"}"><b>${score}/6 Punkten</b><br>${score>=5?"Sehr gut, Hannah!":"Schau dir deine Fehler unten an und übe genau diese Themen noch einmal."}</div>`;
+if(wrong.length){
+  html+=`<div class="card" style="margin-top:12px"><h3>🔎 Deine Fehler</h3>`;
+  wrong.forEach(w=>{
+    html+=`<div style="padding:12px 0;border-bottom:1px solid var(--line)">
+      <b>${w.i}. ${w.q}</b>
+      <div class="feedback no" style="margin-top:8px">Deine Antwort: <b>${w.chosen}</b></div>
+      <div class="feedback ok" style="margin-top:8px">Richtige Antwort: <b>${w.correct}</b></div>
+    </div>`;
+  });
+  html+=`</div>`;
+} else {
+  html+=`<div class="feedback ok" style="margin-top:12px">🎉 Hannah, alles richtig! Keine Fehler zum Nacharbeiten.</div>`;
+}
+tres.innerHTML=html;
+}
+initVocab();updateHome();
+</script>
+</main>
+</body></html>
